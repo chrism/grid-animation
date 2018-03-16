@@ -1932,6 +1932,15 @@ ember-ajax@^3.0.0:
   dependencies:
     ember-cli-babel "^6.6.0"
 
+"ember-animated@https://github.com/ember-animation/ember-animated.git":
+  version "0.2.0"
+  resolved "https://github.com/ember-animation/ember-animated.git#c61363cf83ebf14adb239cc0e219fe311a7465c3"
+  dependencies:
+    ember-cli-babel "^6.11.0"
+    ember-cli-htmlbars "^2.0.1"
+    ember-cli-version-checker "^1.1.7"
+    ember-maybe-import-regenerator "^0.1.5"
+
 ember-cli-app-version@^3.0.0:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/ember-cli-app-version/-/ember-cli-app-version-3.1.3.tgz#26d25f5e653ff0106f0b39da6d75518ba8ed282d"
@@ -2109,7 +2118,7 @@ ember-cli-valid-component-name@^1.0.0:
   dependencies:
     silent-error "^1.0.0"
 
-ember-cli-version-checker@^1.0.2:
+ember-cli-version-checker@^1.0.2, ember-cli-version-checker@^1.1.7:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/ember-cli-version-checker/-/ember-cli-version-checker-1.3.1.tgz#0bc2d134c830142da64bf9627a0eded10b61ae72"
   dependencies:
@@ -2261,7 +2270,7 @@ ember-load-initializers@^1.0.0:
   dependencies:
     ember-cli-babel "^6.0.0-beta.7"
 
-ember-maybe-import-regenerator@^0.1.6:
+ember-maybe-import-regenerator@^0.1.5, ember-maybe-import-regenerator@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/ember-maybe-import-regenerator/-/ember-maybe-import-regenerator-0.1.6.tgz#35d41828afa6d6a59bc0da3ce47f34c573d776ca"
   dependencies:
