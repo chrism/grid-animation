@@ -2,5 +2,7 @@
   <button type="button" name="next" {{action "next"}}>Next</button>
   <button type="button" name="add" {{action "add"}}>Add</button>
 </section>
-{{schedule-tracks-container scheduleTracks=model}}
+
+{{schedule-tracks-container scheduleTracks=sortedScheduleTracks}}
+
 {{outlet}}
