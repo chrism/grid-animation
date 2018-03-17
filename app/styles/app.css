@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+}
+
+.navigation-bar {
+  background: #efefef;
+  height: 30px;
+  display: flex;
+  padding: 10px;
+}
+
+.navigation-bar button {
+  display: flex-item;
+  margin-right: 10px;
+}
