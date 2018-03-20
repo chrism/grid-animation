@@ -1,5 +1,7 @@
 import { Motion, rAF, Tween } from 'ember-animated';
 
+import Sprite from 'ember-animated/-private/sprite';
+
 export default function slide(sprite, opts) {
   return new Slide(sprite, opts).run();
 }
@@ -8,91 +10,129 @@ export class Slide extends Motion {
   constructor(sprite, opts) {
     super(sprite, opts);
     this.prior = null;
+
     this.xTween = null;
-    this.yTween = null;
+
+    this.xCloneTween = null;
+    this.yClonePos = 0;
+
+    this.clone = null;
+    this.queuedSlides = 0;
   }
 
   interrupted(motions) {
-    // We only need to track the prior Move we are replacing here,
+    // We only need to track the prior Slide we are replacing here,
     // because it will have done the same for any earlier ones.
     this.prior = motions.find(m => m instanceof Slide);
   }
 
-  * animate() {
+  firstTimeSlide() {
     let duration = this.duration;
     let sprite = this.sprite;
 
-    // How far our sprite needs to move.
-    let dx, dy;
-    {
-      let initial = sprite.initialBounds;
-      let final = sprite.finalBounds;
-      dx = final.left - initial.left;
-      dy = final.top - initial.top;
+    let initial = sprite.initialBounds;
+    let final = sprite.finalBounds;
+    let standardUnit = initial.width;
+
+    let dx = 0;
+
+    if (isMovingLeft(sprite)) {
+      dx = -standardUnit;
+    } else if (isMovingRight(sprite)) {
+      dx = standardUnit;
     }
 
+    this.xTween = new Tween(
+      sprite.transform.tx,
+      sprite.transform.tx + dx,
+      duration,
+      this.opts.easing
+    );
+
+    if(isMovingVertically(sprite)) {
+      let clone = cloneSprite(sprite);
+      this.clone = clone;
+
+      this.xCloneTween = new Tween(
+        clone.transform.tx + final.left + standardUnit,
+        clone.transform.tx + final.left,
+        duration,
+        this.opts.easing
+      );
+
+      this.yClonePos = -standardUnit;
+    }
+  }
+
+  multipleTimeSlide() {
+    let duration = this.duration;
+    let sprite = this.sprite;
+
+    let priorXTween = this.prior.xTween;
+    let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
+    let dx = (sprite.finalBounds.left - sprite.initialBounds.left) - (priorXTween.finalValue - priorXTween.currentValue);
+    let durationX = fuzzyZero(dx) ? 0 : duration;
+    this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(this.prior.xTween);
+
+    if(isMovingVertically(sprite)) {
+      let clone;
+      if (this.prior.clone) {
+        clone = this.prior.clone;
+        let priorXCloneTween = this.prior.xCloneTween;
+        let transformDiffXClone = clone.transform.tx - priorXCloneTween.currentValue;
+        let cx = sprite.finalBounds.left - clone.finalBounds.left;
+        let durationXClone = fuzzyZero(cx) ? 0 : duration;
+        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + cx, duration, this.opts.easing).plus(this.prior.xCloneTween);
+      } else {
+        // clone = cloneSprite(sprite);
+
+      }
+      this.clone = clone;
+
+
+      let finalCloneY = this.clone.finalBounds.top;
+      let initialCloneY = this.clone.initialBounds.top;
+      let currentCloneY = this.clone.transform.ty;
+
+      this.yClonePos = finalCloneY - initialCloneY - currentCloneY;
+    }
+  }
+
+  * animate() {
+    // The sprite always stays on the same row and slides to right/left
+    // This can include offscreen (if necessary).
+
+    // If the sprite slides offscreen (up/down a row) the a clone is made
+    // This clone then slides on the new row from offscreen to the final position
+    // Once complete the clone is removed.
+
     if (!this.prior) {
-      // when starting a new move we start from its current position
-      // (sprite.transform) and offset that based on the change in
-      // bounds we want.
-      this.xTween = new Tween(
-        sprite.transform.tx,
-        sprite.transform.tx + dx,
-        fuzzyZero(dx) ? 0 : duration,
-        this.opts.easing
-      );
-
-      this.yTween = new Tween(
-        sprite.transform.ty,
-        sprite.transform.ty + dy,
-        fuzzyZero(dy) ? 0 : duration,
-        this.opts.easing
-      );
+      this.firstTimeSlide();
     } else {
-      // Here we are interrupting a prior Move.
-      let priorXTween = this.prior.xTween;
-      let priorYTween = this.prior.yTween;
-
-      // The transformDiffs account for the fact that our old and new
-      // tweens may be measuring from different origins.
-      let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
-      let transformDiffY = sprite.transform.ty - priorYTween.currentValue;
-
-      // We adjust our move distances so that they cancel out the
-      // remainder of the previous move.
-      dx -= priorXTween.finalValue - priorXTween.currentValue;
-      dy -= priorYTween.finalValue - priorYTween.currentValue;
-
-      // If our interrupting move is actually going to the same place
-      // we were already going, we don't really want to extend the
-      // time of the overall animation (it looks funny when you're
-      // waiting around for nothing to happen).
-      let durationX = fuzzyZero(dx) ? 0 : duration;
-      let durationY = fuzzyZero(dy) ? 0 : duration;
-
-      // We add our new differential tweens to the prior tweens. This
-      // is the magic that gives us smooth continuity. At the very
-      // start, the old tween will dominate because the new tween
-      // hasn't ramped up its motion yet. As the old tween finishes,
-      // the new tween begins to dominate. Because of the adjustments
-      // we did above, the sum of both tweens will end up right where
-      // we want to be.
-      this.xTween = new Tween(transformDiffX, transformDiffX + dx, durationX, this.opts.easing).plus(this.prior.xTween);
-      this.yTween = new Tween(transformDiffY, transformDiffY + dy, durationY, this.opts.easing).plus(this.prior.yTween);
+      this.multipleTimeSlide();
     }
 
     yield * this._slideIt();
-
   }
 
   *_slideIt() {
     let sprite = this.sprite;
-    while (!this.xTween.done || !this.yTween.done) {
-      sprite.translate(
-        this.xTween.currentValue - sprite.transform.tx,
-        this.yTween.currentValue - sprite.transform.ty
-      );
-      yield rAF();
+    let clone = this.clone;
+
+    if(clone) {
+      clone.translate(0, this.yClonePos);
+
+      while (!this.xTween.done || !this.xCloneTween.done) {
+        sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
+        clone.translate(this.xCloneTween.currentValue - clone.transform.tx, 0);
+        yield rAF();
+      }
+      sprite.element.parentElement.removeChild(clone.element);
+    } else {
+      while (!this.xTween.done) {
+        sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
+        yield rAF();
+      }
     }
   }
 }
@@ -103,18 +143,40 @@ function fuzzyZero(number) {
   return Math.abs(number) < 0.00001;
 }
 
+function cloneSprite(sprite) {
+  let cloneElement = sprite.element.cloneNode(true);
+  cloneElement.id = cloneElement.id + '-cloned';
+  sprite.element.parentElement.appendChild(cloneElement);
 
-export function continuePrior(sprite, opts) {
-  return new ContinuePrior(sprite, opts).run();
+  let clone = Sprite.positionedStartingAt(cloneElement, sprite._offsetSprite);
+  clone._transitionContext = sprite._transitionContext;
+  clone._finalBounds = sprite._finalBounds;
+  clone.owner = sprite.owner;
+
+  return clone;
 }
 
-export class ContinuePrior extends Slide {
-  * animate() {
-    if (!this.prior) {
-      return;
-    }
-    this.xTween = this.prior.xTween;
-    this.yTween = this.prior.yTween;
-    yield * this._slideIt();
-  }
+function isMovingVertically(sprite) {
+  let change = sprite.initialBounds.top - sprite.finalBounds.top;
+  return Math.abs(change) > 0.5;
+}
+
+function isMovingUp(sprite) {
+  let change = sprite.initialBounds.top - sprite.finalBounds.top;
+  return isMovingVertically(sprite) && change > 0;
+}
+
+function isMovingDown(sprite) {
+  let change = sprite.initialBounds.top - sprite.finalBounds.top;
+  return isMovingVertically(sprite) && change < 0;
+}
+
+function isMovingLeft(sprite) {
+  let change = sprite.initialBounds.left - sprite.finalBounds.left;
+  return isMovingUp(sprite) || (!isMovingVertically(sprite) && change > 0);
+}
+
+function isMovingRight(sprite) {
+  let change = sprite.initialBounds.left - sprite.finalBounds.left;
+  return isMovingDown(sprite) || (!isMovingVertically(sprite) && change < 0);
 }
