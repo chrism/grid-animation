@@ -1,9 +1,9 @@
 import Component from '@ember/component';
 
-import slide, { continuePriorSlide } from '../motions/slide';
+import slide from '../motions/slide';
 import move from '../motions/move';
 
-import { serial } from 'ember-animated';
+import { serial, parallel } from 'ember-animated';
 
 import { Promise } from 'ember-animated';
 
@@ -29,17 +29,12 @@ export default Component.extend({
       fadeOut(sprite, { duration: 500 });
     });
 
-
-
-    // keptSprites.forEach(sprite => {
-    //   fadeIn(sprite);
-    //   if (!offBottomOfScreen(sprite)) {
-    //     continuePriorSlide(sprite);
-    //     slide(sprite);
-    //   }
-    // });
-
-    keptSprites.forEach(slide);
+    keptSprites.forEach(sprite => {
+      fadeIn(sprite);
+      if (!offBottomOfScreen(sprite)) {
+        slide(sprite);
+      }
+    });
 
     insertedSprites.forEach(fadeIn);
   }

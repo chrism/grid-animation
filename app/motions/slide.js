@@ -12,9 +12,7 @@ export class Slide extends Motion {
     this.prior = null;
 
     this.xTween = null;
-
     this.xCloneTween = null;
-    this.yClonePos = 0;
 
     this.clone = null;
   }
@@ -31,37 +29,28 @@ export class Slide extends Motion {
 
     let initial = sprite.initialBounds;
     let final = sprite.finalBounds;
-    let standardUnit = initial.width;
+    let screenWidth = window.innerWidth;
 
-    let dx = -standardUnit;
-
-    this.xTween = new Tween(
-      sprite.transform.tx,
-      sprite.transform.tx + dx,
-      duration,
-      this.opts.easing
-    );
+    let dx;
 
     if (isMovingVertically(sprite)) {
+      dx = -(screenWidth - final.left); // TODO check if sliding right
+      let dy = final.top - initial.top;
+
       let clone = cloneSprite(sprite);
       this.clone = clone;
 
-      this.xCloneTween = new Tween(
-        clone.transform.tx + final.left + standardUnit,
-        clone.transform.tx + final.left,
-        duration,
-        this.opts.easing
-      );
-
-      this.yClonePos = -standardUnit;
+      clone.translate(screenWidth, dy);
+      this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing);
+    } else {
+      dx = final.left - initial.left;
     }
+    this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
   }
 
   multipleTimeSlide() {
     let duration = this.duration;
     let sprite = this.sprite;
-
-    // This handles the sliding sprite and any prior tween
 
     let priorXTween = this.prior.xTween;
     let dx, distanceToSlide;
@@ -71,64 +60,40 @@ export class Slide extends Motion {
     if (isMovingVertically(sprite)) {
       distanceToSlide = -((window.innerWidth - sprite.finalBounds.left) + sprite.initialBounds.left); // sliding left TODO slide right
       dx = distanceToSlide - previousOffset;
+
+      if (this.prior.clone) {
+        let clone = this.prior.clone;
+        this.clone = clone;
+
+        let priorXCloneTween = this.prior.xCloneTween;
+        let transformDiffXClone = clone.transform.tx - priorXCloneTween.currentValue;
+
+        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + dx, duration, this.opts.easing).plus(priorXCloneTween);
+      } else {
+        let clone = cloneSprite(sprite);
+        this.clone = clone;
+
+        let dy = sprite.finalBounds.top - sprite.initialBounds.top;
+        clone.translate(screenWidth - priorXTween.currentValue, dy);
+
+        this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing).plus(priorXTween);
+      }
     } else {
       distanceToSlide = sprite.finalBounds.left - sprite.initialBounds.left;
       dx = distanceToSlide - previousOffset;
     }
 
     let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
-    let durationX = fuzzyZero(dx) ? 0 : duration;
-    this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(this.prior.xTween);
+    this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(priorXTween);
 
-    // let position = sprite.owner.value.get('position');
-    // console.log('position', position, 'previousOffset', previousOffset, 'distanceToSlide', distanceToSlide, 'dx', dx);
-
-    // This handles the cloned sprite (if needed and existing)
-
-
-
-
-
-
-
-
-
-
-    // if(isMovingVertically(sprite)) {
-    //   let clone;
-    //   if (this.prior.clone) {
-    //     clone = this.prior.clone;
-    //     let priorXCloneTween = this.prior.xCloneTween;
-    //     let transformDiffXClone = clone.transform.tx - priorXCloneTween.currentValue;
-    //     let cx = sprite.finalBounds.left - clone.finalBounds.left;
-    //     let durationXClone = fuzzyZero(cx) ? 0 : duration;
-    //     this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + cx, duration, this.opts.easing).plus(this.prior.xCloneTween);
-    //   } else {
-    //     // clone = cloneSprite(sprite);
-    //
-    //   }
-    //   this.clone = clone;
-    //
-    //
-    //   let finalCloneY = this.clone.finalBounds.top;
-    //   let initialCloneY = this.clone.initialBounds.top;
-    //   let currentCloneY = this.clone.transform.ty;
-    //
-    //   this.yClonePos = finalCloneY - initialCloneY - currentCloneY;
-    // }
+    let position = sprite.owner.value.get('position');
+    console.log('position', position, 'previousOffset', previousOffset, 'distanceToSlide', distanceToSlide, 'dx', dx);
   }
 
   * animate() {
-    // The sprite always stays on the same row and slides to right/left
-    // This can include offscreen (if necessary).
-
-    // If the sprite slides offscreen (up/down a row) the a clone is made
-    // This clone then slides on the new row from offscreen to the final position
-    // Once complete the clone is removed.
     let sprite = this.sprite;
 
     if (!isMovingVertically(sprite) && !isMovingHorizontally(sprite)) {
-      console.log('not moving quick return');
       return;
     }
 
@@ -156,8 +121,6 @@ export class Slide extends Motion {
   *_slideSpriteWithClone() {
     let sprite = this.sprite;
     let clone = this.clone;
-
-    clone.translate(0, this.yClonePos);
 
     while (!this.xTween.done || !this.xCloneTween.done) {
       sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
@@ -215,27 +178,4 @@ function isMovingLeft(sprite) {
 function isMovingRight(sprite) {
   let change = sprite.initialBounds.left - sprite.finalBounds.left;
   return isMovingDown(sprite) || (isMovingHorizontally(sprite) && change < 0);
-}
-
-export function continuePriorSlide(sprite, opts) {
-  return new ContinuePriorSlide(sprite, opts).run();
-}
-
-export class ContinuePriorSlide extends Slide {
-  * animate() {
-    console.log('prior...');
-    if (!this.prior) {
-      console.log('no prior quick return');
-      return;
-    }
-    this.xTween = this.prior.xTween;
-
-    if (!this.prior.clone) {
-      yield * this._slideSprite();
-    } else {
-      this.xCloneTween = this.prior.this.xCloneTween;
-      this.yClonePos = this.prior.yClonePos;
-      yield * this._slideSpriteWithClone();
-    }
-  }
 }
