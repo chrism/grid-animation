@@ -33,7 +33,7 @@ export default Component.extend({
       fadeIn(sprite);
       if (!offBottomOfScreen(sprite)) {
         // continuePrior(sprite);
-        move(sprite);
+        slide(sprite);
       }
     });
 
