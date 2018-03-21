@@ -26,8 +26,8 @@ export default Component.extend({
       // let endX = sprite.initialBounds.left -sprite.initialBounds.width;
       // sprite.endAtPixel({ x: -sprite.initialBounds.width });
       // continuePrior(sprite);
-      slide(sprite, { easing: easeInAndOut });
-      // fadeOut(sprite, { duration: 500 });
+      // slide(sprite, { easing: easeInAndOut });
+      fadeOut(sprite, { duration: 500 });
     });
 
     keptSprites.forEach(sprite => {

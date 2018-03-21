@@ -55,13 +55,13 @@ export class Slide extends Motion {
     let initial = sprite.initialBounds;
     let screenWidth = window.innerWidth;
 
-    let dx, distanceToSlide;
+    let dx;
 
     if (this.prior) {
 
       let priorXTween = this.prior.xTween;
       let previousOffset = priorXTween.finalValue - priorXTween.currentValue;
-      distanceToSlide = -(initial.width - previousOffset);
+      let distanceToSlide = -(initial.width - previousOffset);
       dx = distanceToSlide - previousOffset;
 
       let transformDiffX = sprite.transform.tx - priorXTween.currentValue;

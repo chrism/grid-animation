@@ -4,7 +4,7 @@
       "type": "schedule-tracks",
       "id": 0,
       "attributes": {
-        "position": 10,
+        "position": 100,
         "color": "#FC8069"
       }
     },
@@ -13,7 +13,7 @@
       "type": "schedule-tracks",
       "id": 1,
       "attributes": {
-        "position": 2,
+        "position": 20,
         "color": "#26C3AB"
       }
     },
@@ -22,7 +22,7 @@
       "type": "schedule-tracks",
       "id": 2,
       "attributes": {
-        "position": 3,
+        "position": 30,
         "color": "#02ACDE"
       }
     },
@@ -31,7 +31,7 @@
       "type": "schedule-tracks",
       "id": 3,
       "attributes": {
-        "position": 4,
+        "position": 40,
         "color": "#EED176"
       }
     },
@@ -40,7 +40,7 @@
       "type": "schedule-tracks",
       "id": 4,
       "attributes": {
-        "position": 5,
+        "position": 50,
         "color": "#BC9298"
       }
     },
@@ -49,7 +49,7 @@
       "type": "schedule-tracks",
       "id": 5,
       "attributes": {
-        "position": 6,
+        "position": 60,
         "color": "#C8648C"
       }
     },
@@ -58,7 +58,7 @@
       "type": "schedule-tracks",
       "id": 6,
       "attributes": {
-        "position": 7,
+        "position": 70,
         "color": "#1E705A"
       }
     }

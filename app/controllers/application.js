@@ -18,6 +18,11 @@ export default Controller.extend({
   }),
 
   actions: {
+    deleteScheduleTrack(scheduleTrack) {
+      console.log('delete...', scheduleTrack);
+      scheduleTrack.set('state', 'played');
+    },
+
     next() {
       let scheduleTrack = this.get('sortedScheduleTracks.firstObject');
       if (scheduleTrack) {
@@ -28,7 +33,7 @@ export default Controller.extend({
     add() {
       let { colorsArray, maxPosition } = getProperties(this, 'colorsArray', 'maxPosition');
 
-      let nextPosition = maxPosition + 1;
+      let nextPosition = maxPosition + 10;
       let randomColor = colorsArray[Math.floor(Math.random() * colorsArray.get('length'))];
 
       let scheduleTrack = this.get('store').createRecord('scheduleTrack', {

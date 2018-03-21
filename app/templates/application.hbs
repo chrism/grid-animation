@@ -3,6 +3,6 @@
   <button type="button" name="add" {{action "add"}}>Add</button>
 </section>
 
-{{schedule-tracks-container scheduleTracks=sortedScheduleTracks}}
+{{schedule-tracks-container scheduleTracks=sortedScheduleTracks onDelete=(action "deleteScheduleTrack")}}
 
 {{outlet}}
