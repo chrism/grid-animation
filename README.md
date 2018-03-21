@@ -2,13 +2,12 @@
 
 ## Useful transition references
 
-// Transition examples of interest
+### From ember-animated
 
-// From embaer-animated
+#### Clean each example
+`tests/dummy/app/components/each-example.js`
 
-// Clean each example
-// tests/dummy/app/components/each-example.js
-
+```js
 transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
   insertedSprites.forEach(sprite => {
     sprite.startAtPixel({ x: window.innerWidth });
@@ -25,11 +24,13 @@ transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
     move(sprite, { easing: easeIn });
   });
 }
+```
 
 
-// Uses parallel and some extra stuff
-// tests/dummy/app/controllers/demos/hero/detail.js
+#### Uses parallel and some extra stuff
+`tests/dummy/app/controllers/demos/hero/detail.js`
 
+```js
 transition: function * ({ receivedSprites, sentSprites, removedSprites }) {
 
   // received and sent sprites are flying above all the others
@@ -48,9 +49,12 @@ transition: function * ({ receivedSprites, sentSprites, removedSprites }) {
     opacity(sprite, { to: 0 });
   });
 }
+```
 
-// Some extra options and start/end pixels
-// tests/dummy/app/controllers/demos/nested.js
+#### Some extra options and start/end pixels
+`tests/dummy/app/controllers/demos/nested.js`
+
+```js
 
 transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
   insertedSprites.forEach(sprite => {
@@ -68,10 +72,12 @@ transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
     move(sprite, { easing: easeIn });
   });
 }
+```
 
-// Using a computed property here
-// tests/dummy/app/components/swapping-lists-example.js
+#### Using a computed property here
+`tests/dummy/app/components/swapping-lists-example.js`
 
+```js
 transition: computed('animateSendingSide', function() {
   if (this.get('animateSendingSide')) {
     return this.moveSent;
@@ -93,10 +99,12 @@ moveSent: function * ({ sentSprites, insertedSprites }) {
   // transition
   insertedSprites.forEach(s => s.reveal());
 }
+```
 
-// Check out moveToFinalPosition()
-// tests/dummy/app/components/two-lists-example.js
+#### Check out moveToFinalPosition()
+`tests/dummy/app/components/two-lists-example.js`
 
+```js
 transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
   // The parts of each list that haven't changed moves to accomodate
   // inserted and removed peers
@@ -116,10 +124,12 @@ transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
   // corresponding element in the other list.
   receivedSprites.forEach(sprite => sprite.moveToFinalPosition());
 }
+```
 
-// Force feeding opacity
-// tests/dummy/app/controllers/demos/hero/index.js
+#### Force feeding opacity
+`tests/dummy/app/controllers/demos/hero/index.js`
 
+```js
 transition: function * ({ insertedSprites, receivedSprites, removedSprites }) {
   insertedSprites.forEach(sprite => {
     opacity(sprite, { from: 0, to: 1 });
@@ -133,12 +143,14 @@ transition: function * ({ insertedSprites, receivedSprites, removedSprites }) {
     opacity(sprite, { to: 0 });
   });
 }
+```
 
-// From living-animation
+### From living-animation
 
-// Using duration in Transition
-// src/ui/components/definition-slide/component.js
+#### Using duration in Transition
+`src/ui/components/definition-slide/component.js`
 
+```js
 duration: slideTransitionDuration,
 transition: function * ({ sentSprites, removedSprites, duration }) {
   // When we're being sent away we `move` and `scale` to the new
@@ -152,10 +164,12 @@ transition: function * ({ sentSprites, removedSprites, duration }) {
   // half the duration and then fades in for the second half.
   removedSprites.forEach(sprite => fadeOut(sprite, { duration: duration / 2 }));
 }
+```
 
-// Lots of parallel
-// src/ui/components/moving-word/component.js
+#### Lots of parallel
+`src/ui/components/moving-word/component.js`
 
+```js
 transition: function * ({ sentSprites }) {
   sentSprites.forEach(
     parallel(
@@ -167,10 +181,12 @@ transition: function * ({ sentSprites }) {
     )
   );
 }
+```
 
-// Complex example with lots of calculations, different manipulations, using yield and wait
-// src/ui/routes/affordances/index/controller.js
+#### Complex example with lots of calculations, different manipulations, using yield and wait
+`src/ui/routes/affordances/index/controller.js`
 
+```js
 indexTransition: function * ({ sentSprites, receivedSprites, removedSprites, insertedSprites }) {
   if (sentSprites.length === 0 && receivedSprites.length === 0) {
     return;
@@ -255,10 +271,12 @@ indexTransition: function * ({ sentSprites, receivedSprites, removedSprites, ins
     yield wait(perSpriteDelay);
   }
 }
+```
 
-// Uses helper functions, groupBy, yielding promises and break
-// src/ui/routes/tutorial-12/controller.js
+#### Uses helper functions, groupBy, yielding promises and break
+`src/ui/routes/tutorial-12/controller.js`
 
+```js
 import groupBy from 'lodash/groupBy';
 
 export default Controller.extend({
@@ -308,10 +326,12 @@ function offBottomOfScreen(row) {
   return row[0].absoluteInitialBounds.top > window.innerHeight &&
     row[0].absoluteFinalBounds.top > window.innerHeight;
 }
+```
 
-// Uses models, find and filtering
-// src/ui/routes/tutorial-24/controller.js
+#### Uses models, find and filtering
+`src/ui/routes/tutorial-24/controller.js`
 
+```js
 transition: function * ({ keptSprites }) {
   let activeSprite = keptSprites.find(sprite => sprite.owner.value.dragState);
   let others = keptSprites.filter(sprite => sprite !== activeSprite);
@@ -329,3 +349,4 @@ transition: function * ({ keptSprites }) {
   }
   others.forEach(move);
 }
+```
