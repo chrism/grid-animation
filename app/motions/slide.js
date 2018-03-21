@@ -48,13 +48,40 @@ export class Slide extends Motion {
     this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
   }
 
-  multipleTimeSlide() {
+  removeSlide() {
     let duration = this.duration;
     let sprite = this.sprite;
 
-    let priorXTween = this.prior.xTween;
-    let dx, distanceToSlide;
+    let initial = sprite.initialBounds;
     let screenWidth = window.innerWidth;
+
+    let dx, distanceToSlide;
+
+    if (this.prior) {
+
+      let priorXTween = this.prior.xTween;
+      let previousOffset = priorXTween.finalValue - priorXTween.currentValue;
+      distanceToSlide = -(initial.width - previousOffset);
+      dx = distanceToSlide - previousOffset;
+
+      let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
+      this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(priorXTween);
+
+      let position = sprite.owner.value.get('position');
+      console.log('removing position', position, 'previousOffset', previousOffset, 'distanceToSlide', distanceToSlide, 'dx', dx);
+    } else {
+      dx = -(initial.width + initial.left);
+      this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
+    }
+  }
+
+  multipleTimeSlide() {
+    let duration = this.duration;
+    let sprite = this.sprite;
+    let screenWidth = window.innerWidth;
+
+    let dx, distanceToSlide;
+    let priorXTween = this.prior.xTween;
     let previousOffset = priorXTween.finalValue - priorXTween.currentValue;
 
     if (isMovingVertically(sprite)) {
@@ -93,41 +120,36 @@ export class Slide extends Motion {
   * animate() {
     let sprite = this.sprite;
 
-    if (!isMovingVertically(sprite) && !isMovingHorizontally(sprite)) {
+    if (sprite.owner.state === "removing") {
+      this.removeSlide();
+    } else if (sprite.owner.state !== "removing" && !isMovingVertically(sprite) && !isMovingHorizontally(sprite)) {
       return;
-    }
-
-    if (!this.prior) {
+    } else if (!this.prior) {
       this.firstTimeSlide();
     } else {
       this.multipleTimeSlide();
     }
 
-    if (!this.clone) {
-      yield * this._slideSprite();
-    } else {
-      yield * this._slideSpriteWithClone();
-    }
+    yield * this._slide();
   }
 
-  *_slideSprite() {
-    let sprite = this.sprite;
-    while (!this.xTween.done) {
-      sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
-      yield rAF();
-    }
-  }
-
-  *_slideSpriteWithClone() {
+  *_slide() {
     let sprite = this.sprite;
     let clone = this.clone;
 
-    while (!this.xTween.done || !this.xCloneTween.done) {
-      sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
-      clone.translate(this.xCloneTween.currentValue - clone.transform.tx, 0);
-      yield rAF();
+    if (clone) {
+      while (!this.xTween.done || !this.xCloneTween.done) {
+        sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
+        clone.translate(this.xCloneTween.currentValue - clone.transform.tx, 0);
+        yield rAF();
+      }
+      sprite.element.parentElement.removeChild(clone.element);
+    } else {
+      while (!this.xTween.done) {
+        sprite.translate(this.xTween.currentValue - sprite.transform.tx, 0);
+        yield rAF();
+      }
     }
-    sprite.element.parentElement.removeChild(clone.element);
   }
 }
 

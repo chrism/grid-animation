@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 
 import slide from '../motions/slide';
-import move from '../motions/move';
+import move, { continuePrior } from '../motions/move';
 
 import { serial, parallel } from 'ember-animated';
 
@@ -23,10 +23,11 @@ export default Component.extend({
                             removedSprites }) {
 
     removedSprites.forEach(sprite => {
-      // let endX = sprite.initialBounds.left - sprite.initialBounds.width;
-      // sprite.endAtPixel({ x: endX });
-      // move(sprite, { easing: easeInAndOut });
-      fadeOut(sprite, { duration: 500 });
+      // let endX = sprite.initialBounds.left -sprite.initialBounds.width;
+      // sprite.endAtPixel({ x: -sprite.initialBounds.width });
+      // continuePrior(sprite);
+      slide(sprite, { easing: easeInAndOut });
+      // fadeOut(sprite, { duration: 500 });
     });
 
     keptSprites.forEach(sprite => {
