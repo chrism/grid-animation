@@ -23,31 +23,6 @@ export class Slide extends Motion {
     this.prior = motions.find(m => m instanceof Slide);
   }
 
-  firstTimeSlide() {
-    let duration = this.duration;
-    let sprite = this.sprite;
-
-    let initial = sprite.initialBounds;
-    let final = sprite.finalBounds;
-    let screenWidth = window.innerWidth;
-
-    let dx;
-
-    if (isMovingVertically(sprite)) {
-      dx = -(screenWidth - final.left); // TODO check if sliding right
-      let dy = final.top - initial.top;
-
-      let clone = cloneSprite(sprite);
-      this.clone = clone;
-
-      clone.translate(screenWidth, dy);
-      this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing);
-    } else {
-      dx = final.left - initial.left;
-    }
-    this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
-  }
-
   removeSlide() {
     let duration = this.duration;
     let sprite = this.sprite;
@@ -75,6 +50,37 @@ export class Slide extends Motion {
     }
   }
 
+  firstTimeSlide() {
+    let duration = this.duration;
+    let sprite = this.sprite;
+
+    let initial = sprite.initialBounds;
+    let final = sprite.finalBounds;
+    let screenWidth = window.innerWidth;
+
+    let dx;
+
+    if (isMovingVertically(sprite)) {
+      let clone = cloneSprite(sprite);
+      this.clone = clone;
+
+      let dy = final.top - initial.top;
+
+      if (isMovingLeft(sprite)) {
+        dx = -(screenWidth - final.left);
+        clone.translate(screenWidth, dy);
+      } else {
+        dx = final.width;
+        clone.translate(-screenWidth, dy);
+      }
+
+      this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing);
+    } else {
+      dx = final.left - initial.left;
+    }
+    this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
+  }
+
   multipleTimeSlide() {
     let duration = this.duration;
     let sprite = this.sprite;
@@ -85,7 +91,13 @@ export class Slide extends Motion {
     let previousOffset = priorXTween.finalValue - priorXTween.currentValue;
 
     if (isMovingVertically(sprite)) {
-      distanceToSlide = -((window.innerWidth - sprite.finalBounds.left) + sprite.initialBounds.left); // sliding left TODO slide right
+
+      if (isMovingLeft(sprite)) {
+        distanceToSlide = -((screenWidth - sprite.finalBounds.left) + sprite.initialBounds.left);
+      } else {
+        distanceToSlide = (screenWidth - sprite.initialBounds.left) + sprite.finalBounds.left;
+      }
+
       dx = distanceToSlide - previousOffset;
 
       if (this.prior.clone) {
@@ -101,7 +113,15 @@ export class Slide extends Motion {
         this.clone = clone;
 
         let dy = sprite.finalBounds.top - sprite.initialBounds.top;
-        clone.translate(screenWidth - priorXTween.currentValue, dy);
+        let translateX;
+
+        if (isMovingLeft(sprite)) {
+          translateX = screenWidth - priorXTween.currentValue;
+        } else {
+          translateX = -(screenWidth + priorXTween.currentValue);
+        }
+
+        clone.translate(translateX, dy);
 
         this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing).plus(priorXTween);
       }
@@ -194,10 +214,10 @@ function isMovingHorizontally(sprite) {
 
 function isMovingLeft(sprite) {
   let change = sprite.initialBounds.left - sprite.finalBounds.left;
-  return isMovingUp(sprite) || (isMovingHorizontally(sprite) && change > 0);
+  return isMovingUp(sprite) || (isMovingHorizontally(sprite) && change < 0);
 }
 
 function isMovingRight(sprite) {
   let change = sprite.initialBounds.left - sprite.finalBounds.left;
-  return isMovingDown(sprite) || (isMovingHorizontally(sprite) && change < 0);
+  return isMovingDown(sprite) || (isMovingHorizontally(sprite) && change > 0);
 }

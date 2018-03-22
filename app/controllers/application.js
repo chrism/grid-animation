@@ -9,7 +9,7 @@ export default Controller.extend({
   queuedPositionsArray: mapBy('queuedTracks', 'position'),
   maxPosition: max('queuedPositionsArray'),
   minPosition: min('queuedPositionsArray'),
-  startOffset: 0,
+  startOffset: 1,
 
   queuedTracks: computed('model.@each.state', function() {
     let queued = this.get('model').filter(m => {
