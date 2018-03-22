@@ -1,8 +1,10 @@
 import Component from '@ember/component';
 
 import slide from '../motions/slide';
-import { Promise } from 'ember-animated';
-import { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
+import move from 'ember-animated/motions/move';
+import opacity, { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
+
+import { wait } from 'ember-animated';
 
 import groupBy from 'lodash/groupBy';
 
@@ -17,12 +19,23 @@ export default Component.extend({
     let deleted = removedSprites.filter(sprite => sprite.owner.value.get('state') === "deleted");
 
     deleted.forEach(sprite => {
-      fadeOut(sprite, { duration: 300 });
+      fadeOut(sprite, { duration: 500 });
     });
 
     played.forEach(slide);
 
-    keptSprites.forEach(sprite => {
+    let keptSliding = keptSprites.filter(sprite => !sprite.owner.value.get('liked'));
+    let likedSprite = keptSprites.filter(sprite => sprite.owner.value.get('liked'));
+
+    likedSprite.forEach(sprite => {
+      sprite.applyStyles({
+        'z-index': -1
+      });
+      sprite.moveToFinalPosition();
+    });
+
+
+    keptSliding.forEach(sprite => {
       if (!offBottomOfScreen(sprite)) {
         fadeIn(sprite);
         slide(sprite);

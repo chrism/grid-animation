@@ -6,6 +6,10 @@ export default Component.extend({
   actions: {
     delete() {
       this.get('onDelete')(this.get('scheduleTrack'));
+    },
+
+    like() {
+      this.get('onLike')(this.get('scheduleTrack'));
     }
   }
 });
