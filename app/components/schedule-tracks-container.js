@@ -16,12 +16,15 @@ export default Component.extend({
     let played = removedSprites.filter(sprite => sprite.owner.value.get('state') === "played");
     let deleted = removedSprites.filter(sprite => sprite.owner.value.get('state') === "deleted");
 
-    deleted.forEach(fadeOut);
+    deleted.forEach(sprite => {
+      fadeOut(sprite, { duration: 300 });
+    });
+
     played.forEach(slide);
 
     keptSprites.forEach(sprite => {
-      fadeIn(sprite);
       if (!offBottomOfScreen(sprite)) {
+        fadeIn(sprite);
         slide(sprite);
       }
     });

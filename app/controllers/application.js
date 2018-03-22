@@ -13,7 +13,6 @@ export default Controller.extend({
 
   queuedTracks: computed('model.@each.state', function() {
     let queued = this.get('model').filter(m => {
-      // console.log('state', m.state);
       return m.state !== "played" && m.state !== "deleted"
     });
     return queued;
