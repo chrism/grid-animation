@@ -1,6 +1,7 @@
 <section class="navigation-bar">
   <button type="button" name="next" {{action "next"}}>Next</button>
-  <button type="button" name="add" {{action "add"}}>Add</button>
+  <button type="button" name="add" {{action "addEnd"}}>Add at end</button>
+  <button type="button" name="add" {{action "addStart"}}>Add at start</button>
 </section>
 
 {{schedule-tracks-container scheduleTracks=sortedScheduleTracks onDelete=(action "deleteScheduleTrack")}}
