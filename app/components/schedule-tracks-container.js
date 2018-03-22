@@ -2,6 +2,7 @@ import Component from '@ember/component';
 
 import slide from '../motions/slide';
 import { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
+import { spawnChild } from 'ember-animated';
 
 export default Component.extend({
   classNames: ['schedule-tracks-container'],
@@ -9,6 +10,8 @@ export default Component.extend({
   transition: function * ({ keptSprites,
                             insertedSprites,
                             removedSprites }) {
+
+    insertedSprites.forEach(fadeIn);
 
     let played = removedSprites.filter(sprite => sprite.owner.value.get('state') === "played");
     let deleted = removedSprites.filter(sprite => sprite.owner.value.get('state') === "deleted");
@@ -20,24 +23,29 @@ export default Component.extend({
     played.forEach(slide);
 
     let keptSliding = keptSprites.filter(sprite => !sprite.owner.value.get('liked'));
-    let likedSprite = keptSprites.filter(sprite => sprite.owner.value.get('liked'));
-
-    likedSprite.forEach(sprite => {
-      sprite.applyStyles({
-        'z-index': -1
-      });
-      sprite.moveToFinalPosition();
-    });
-
 
     keptSliding.forEach(sprite => {
       if (!offBottomOfScreen(sprite)) {
+        sprite.applyStyles({
+          'z-index': 1
+        });
         fadeIn(sprite);
         slide(sprite);
       }
     });
 
-    insertedSprites.forEach(fadeIn);
+    let likedSprite = keptSprites.filter(sprite => sprite.owner.value.get('liked'));
+
+    likedSprite.forEach(sprite => {
+      spawnChild(function * () {
+        yield fadeOut(sprite, { duration: 500 });
+        sprite.applyStyles({
+          'z-index': -1
+        });
+        sprite.moveToFinalPosition();
+        yield fadeIn(sprite, { duration: 500 });
+      });
+    });
   }
 });
 
