@@ -30,7 +30,6 @@ export class Slide extends Motion {
     let sprite = this.sprite;
 
     let initial = sprite.initialBounds;
-    let screenWidth = window.innerWidth;
 
     let dx;
 
@@ -41,10 +40,10 @@ export class Slide extends Motion {
       let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
 
       dx = distanceToSlide - previousOffset;
-      this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(priorXTween);
+      this.xTween = new Tween(transformDiffX, transformDiffX + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing).plus(priorXTween);
     } else {
       dx = -(initial.width + initial.left);
-      this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
+      this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing);
     }
   }
 
@@ -78,14 +77,14 @@ export class Slide extends Motion {
         clone.translate(-screenWidth, dy);
       }
 
-      this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing);
+      this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing);
     } else {
       // A simple slide on the same row
       dx = final.left - initial.left;
     }
 
     // Finally the sprite needs to be animated too
-    this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, duration, this.opts.easing);
+    this.xTween = new Tween(sprite.transform.tx, sprite.transform.tx + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing);
   }
 
   priorSlide() {
@@ -122,7 +121,7 @@ export class Slide extends Motion {
         let priorXCloneTween = this.prior.xCloneTween;
         let transformDiffXClone = clone.transform.tx - priorXCloneTween.currentValue;
 
-        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + dx, duration, this.opts.easing).plus(priorXCloneTween);
+        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing).plus(priorXCloneTween);
       } else {
         // If no clone exists but the sprite is moving vertically
         // We need to make one
@@ -142,7 +141,7 @@ export class Slide extends Motion {
 
         clone.translate(translateX, dy);
 
-        this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, duration, this.opts.easing).plus(priorXTween);
+        this.xCloneTween = new Tween(clone.transform.tx, clone.transform.tx + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing).plus(priorXTween);
       }
     } else {
       // When the sprite isn't moving vertically
@@ -159,13 +158,13 @@ export class Slide extends Motion {
         let priorXCloneTween = this.prior.xCloneTween;
         let transformDiffXClone = clone.transform.tx - priorXCloneTween.currentValue;
 
-        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + dx, duration, this.opts.easing).plus(priorXCloneTween);
+        this.xCloneTween = new Tween(transformDiffXClone, transformDiffXClone + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing).plus(priorXCloneTween);
       }
     }
 
     // Finally the sprite needs to animate too
     let transformDiffX = sprite.transform.tx - priorXTween.currentValue;
-    this.xTween = new Tween(transformDiffX, transformDiffX + dx, duration, this.opts.easing).plus(priorXTween);
+    this.xTween = new Tween(transformDiffX, transformDiffX + dx, fuzzyZero(dx) ? 0 : duration, this.opts.easing).plus(priorXTween);
   }
 
   * animate() {
@@ -237,11 +236,6 @@ function isMovingUp(sprite) {
   return isMovingVertically(sprite) && change > 0;
 }
 
-function isMovingDown(sprite) {
-  let change = sprite.initialBounds.top - sprite.finalBounds.top;
-  return isMovingVertically(sprite) && change < 0;
-}
-
 function isMovingHorizontally(sprite) {
   let change = sprite.initialBounds.left - sprite.finalBounds.left;
   return Math.abs(change) > 0.5;
@@ -250,9 +244,4 @@ function isMovingHorizontally(sprite) {
 function isMovingLeft(sprite) {
   let change = sprite.initialBounds.left - sprite.finalBounds.left;
   return isMovingUp(sprite) || (isMovingHorizontally(sprite) && change < 0);
-}
-
-function isMovingRight(sprite) {
-  let change = sprite.initialBounds.left - sprite.finalBounds.left;
-  return isMovingDown(sprite) || (isMovingHorizontally(sprite) && change > 0);
 }

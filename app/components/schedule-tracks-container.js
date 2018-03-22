@@ -1,12 +1,7 @@
 import Component from '@ember/component';
 
 import slide from '../motions/slide';
-import move from 'ember-animated/motions/move';
-import opacity, { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
-
-import { wait } from 'ember-animated';
-
-import groupBy from 'lodash/groupBy';
+import { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
 
 export default Component.extend({
   classNames: ['schedule-tracks-container'],

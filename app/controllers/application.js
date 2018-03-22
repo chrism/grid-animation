@@ -1,6 +1,5 @@
 import Controller from '@ember/controller';
 import { mapBy, max, min, setDiff } from '@ember/object/computed';
-import { getProperties } from '@ember/object';
 import { sortBy } from 'lodash';
 import { computed } from '@ember/object';
 
@@ -39,15 +38,13 @@ export default Controller.extend({
     let colorsArray = this.get('colorsArray');
     let randomColor = colorsArray[Math.floor(Math.random() * colorsArray.get('length'))];
 
-    let scheduleTrack = this.get('store').createRecord('scheduleTrack', {
+    this.get('store').createRecord('scheduleTrack', {
       position: newPosition,
       color: randomColor
     });
   },
 
   clearAllLiked() {
-    console.log('clearing');
-
     this.get('queuedTracks').forEach(scheduleTrack => {
       scheduleTrack.set('liked', false);
     });
