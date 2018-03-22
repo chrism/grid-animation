@@ -1,17 +1,8 @@
 import Component from '@ember/component';
 
 import slide from '../motions/slide';
-import move, { continuePrior } from '../motions/move';
-
-import { serial, parallel } from 'ember-animated';
-
 import { Promise } from 'ember-animated';
-
-import Sprite from 'ember-animated/-private/sprite';
-
 import { fadeOut, fadeIn } from 'ember-animated/motions/opacity';
-
-import { easeInAndOut } from 'ember-animated/easings/cosine';
 
 import groupBy from 'lodash/groupBy';
 
@@ -22,13 +13,11 @@ export default Component.extend({
                             insertedSprites,
                             removedSprites }) {
 
-    removedSprites.forEach(sprite => {
-      // let endX = sprite.initialBounds.left -sprite.initialBounds.width;
-      // sprite.endAtPixel({ x: -sprite.initialBounds.width });
-      // continuePrior(sprite);
-      // slide(sprite, { easing: easeInAndOut });
-      fadeOut(sprite, { duration: 500 });
-    });
+    let played = removedSprites.filter(sprite => sprite.owner.value.get('state') === "played");
+    let deleted = removedSprites.filter(sprite => sprite.owner.value.get('state') === "deleted");
+
+    deleted.forEach(fadeOut);
+    played.forEach(slide);
 
     keptSprites.forEach(sprite => {
       fadeIn(sprite);

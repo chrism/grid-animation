@@ -10,7 +10,11 @@ export default Controller.extend({
   maxPosition: max('positionsArray'),
 
   queuedTracks: computed('model.@each.state', function() {
-    return this.get('model').filter(m => m.state !== "played");
+    let queued = this.get('model').filter(m => {
+      // console.log('state', m.state);
+      return m.state !== "played" && m.state !== "deleted"
+    });
+    return queued;
   }),
 
   sortedScheduleTracks: computed('queuedTracks.@each.position', function() {
@@ -19,8 +23,7 @@ export default Controller.extend({
 
   actions: {
     deleteScheduleTrack(scheduleTrack) {
-      console.log('delete...', scheduleTrack);
-      scheduleTrack.set('state', 'played');
+      scheduleTrack.set('state', 'deleted');
     },
 
     next() {
