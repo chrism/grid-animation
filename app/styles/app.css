@@ -3,6 +3,9 @@ body {
 }
 
 .navigation-bar {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
   background: #efefef;
   height: 30px;
   display: flex;
@@ -17,6 +20,7 @@ body {
 .schedule-tracks-container {
   display: flex;
   flex-wrap: wrap;
+  padding-top: 50px;
 }
 
 .schedule-track {
