@@ -184,7 +184,7 @@ transition: function * ({ sentSprites }) {
 ```
 
 #### Complex example with lots of calculations, different manipulations, using yield and wait
-`src/ui/routes/affordances/index/controller.js`
+[`src/ui/routes/affordances/index/controller.js`](https://github.com/ef4/living-animation/blob/master/src/ui/routes/affordances/index/controller.js)
 
 ```js
 indexTransition: function * ({ sentSprites, receivedSprites, removedSprites, insertedSprites }) {
