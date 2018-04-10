@@ -5,7 +5,7 @@
 ### From ember-animated
 
 #### Clean each example
-`tests/dummy/app/components/each-example.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/each-example.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/each-example.js)
 
 ```js
 transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
@@ -28,7 +28,7 @@ transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
 
 
 #### Uses parallel and some extra stuff
-`tests/dummy/app/controllers/demos/hero/detail.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/detail.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/detail.js)
 
 ```js
 transition: function * ({ receivedSprites, sentSprites, removedSprites }) {
@@ -52,7 +52,7 @@ transition: function * ({ receivedSprites, sentSprites, removedSprites }) {
 ```
 
 #### Some extra options and start/end pixels
-`tests/dummy/app/controllers/demos/nested.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/nested.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/nested.js)
 
 ```js
 
@@ -75,7 +75,7 @@ transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
 ```
 
 #### Using a computed property here
-`tests/dummy/app/components/swapping-lists-example.js`
+`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/swapping-lists-example.js`
 
 ```js
 transition: computed('animateSendingSide', function() {
@@ -102,7 +102,7 @@ moveSent: function * ({ sentSprites, insertedSprites }) {
 ```
 
 #### Check out moveToFinalPosition()
-`tests/dummy/app/components/two-lists-example.js`
+`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/two-lists-example.js`
 
 ```js
 transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
@@ -127,7 +127,7 @@ transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
 ```
 
 #### Force feeding opacity
-`tests/dummy/app/controllers/demos/hero/index.js`
+`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/index.js`
 
 ```js
 transition: function * ({ insertedSprites, receivedSprites, removedSprites }) {
@@ -148,7 +148,7 @@ transition: function * ({ insertedSprites, receivedSprites, removedSprites }) {
 ### From living-animation
 
 #### Using duration in Transition
-`src/ui/components/definition-slide/component.js`
+[`https://github.com/ef4/living-animation/blob/master/src/ui/components/definition-slide/component.js`](https://github.com/ef4/living-animation/blob/master/src/ui/components/definition-slide/component.js)
 
 ```js
 duration: slideTransitionDuration,
@@ -167,7 +167,7 @@ transition: function * ({ sentSprites, removedSprites, duration }) {
 ```
 
 #### Lots of parallel
-`src/ui/components/moving-word/component.js`
+[`https://github.com/ef4/living-animation/blob/master/src/ui/components/moving-word/component.js`](https://github.com/ef4/living-animation/blob/master/src/ui/components/moving-word/component.js)
 
 ```js
 transition: function * ({ sentSprites }) {
@@ -184,7 +184,7 @@ transition: function * ({ sentSprites }) {
 ```
 
 #### Complex example with lots of calculations, different manipulations, using yield and wait
-[`src/ui/routes/affordances/index/controller.js`](https://github.com/ef4/living-animation/blob/master/src/ui/routes/affordances/index/controller.js)
+[`https://github.com/ef4/living-animation/blob/master/src/ui/routes/affordances/index/controller.js`](https://github.com/ef4/living-animation/blob/master/src/ui/routes/affordances/index/controller.js)
 
 ```js
 indexTransition: function * ({ sentSprites, receivedSprites, removedSprites, insertedSprites }) {
@@ -274,7 +274,7 @@ indexTransition: function * ({ sentSprites, receivedSprites, removedSprites, ins
 ```
 
 #### Uses helper functions, groupBy, yielding promises and break
-`src/ui/routes/tutorial-12/controller.js`
+[`https://github.com/ef4/living-animation/blob/master/src/ui/routes/tutorial-12/controller.js`](https://github.com/ef4/living-animation/blob/master/src/ui/routes/tutorial-12/controller.js)
 
 ```js
 import groupBy from 'lodash/groupBy';
@@ -329,7 +329,7 @@ function offBottomOfScreen(row) {
 ```
 
 #### Uses models, find and filtering
-`src/ui/routes/tutorial-24/controller.js`
+[`https://github.com/ef4/living-animation/blob/master/src/ui/routes/tutorial-24/controller.js`](https://github.com/ef4/living-animation/blob/master/src/ui/routes/tutorial-24/controller.js)
 
 ```js
 transition: function * ({ keptSprites }) {
