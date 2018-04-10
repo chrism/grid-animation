@@ -75,7 +75,7 @@ transition: function * ({ insertedSprites, keptSprites, removedSprites }) {
 ```
 
 #### Using a computed property here
-`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/swapping-lists-example.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/swapping-lists-example.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/swapping-lists-example.js)
 
 ```js
 transition: computed('animateSendingSide', function() {
@@ -102,7 +102,7 @@ moveSent: function * ({ sentSprites, insertedSprites }) {
 ```
 
 #### Check out moveToFinalPosition()
-`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/two-lists-example.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/two-lists-example.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/components/two-lists-example.js)
 
 ```js
 transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
@@ -127,7 +127,7 @@ transition: function * ({ keptSprites, sentSprites, receivedSprites }) {
 ```
 
 #### Force feeding opacity
-`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/index.js`
+[`https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/index.js`](https://github.com/ember-animation/ember-animated/blob/master/tests/dummy/app/controllers/demos/hero/index.js)
 
 ```js
 transition: function * ({ insertedSprites, receivedSprites, removedSprites }) {
